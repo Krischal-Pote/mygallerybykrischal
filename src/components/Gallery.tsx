@@ -19,7 +19,23 @@ interface Image {
   width: number;
   height: number;
 }
+const ImageWithPlaceholder: React.FC<{ src: string; alt: string }> = ({
+  src,
+  alt,
+}) => {
+  const [isLoaded, setIsLoaded] = useState(false);
 
+  return (
+    <img
+      src={isLoaded ? src : "https://via.placeholder.com/300"}
+      alt={alt}
+      className="w-full h-64 object-cover transition-opacity duration-300"
+      loading="lazy"
+      onLoad={() => setIsLoaded(true)}
+      style={{ opacity: isLoaded ? 1 : 0.5 }}
+    />
+  );
+};
 const Gallery: React.FC = () => {
   const [images, setImages] = useState<Image[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -113,11 +129,9 @@ const Gallery: React.FC = () => {
                 className="bg-white rounded-lg shadow-lg overflow-hidden cursor-pointer"
                 onClick={() => handleImageClick(image)}
               >
-                <img
+                <ImageWithPlaceholder
                   src={image.download_url}
                   alt={image.author}
-                  className="w-full h-64 object-cover"
-                  loading="lazy"
                 />
                 <div className="p-4">
                   <h2 className="text-lg font-semibold">{image.author}</h2>
